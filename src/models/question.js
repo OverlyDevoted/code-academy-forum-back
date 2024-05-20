@@ -10,6 +10,6 @@ const questionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const questionModel = mongoose.Model("Question", questionSchema, "questions");
+const questionModel = mongoose.model("Question", questionSchema, "questions");
 
 module.exports = questionModel;
