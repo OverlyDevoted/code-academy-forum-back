@@ -4,7 +4,7 @@ const answerSchema = new mongoose.Schema(
   {
     id: { type: String, required: true },
     answer_text: { type: String, required: true },
-    liked_by: { type: Array(String), required: true },
+    liked_by: { type: Array(String), required: true, default: [] },
     question_id: { type: String, required: true },
   },
   { timestamps: true }
