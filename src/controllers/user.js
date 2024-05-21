@@ -14,18 +14,31 @@ module.exports.SIGN_UP = async (req, res) => {
       })),
     });
   }
-
   const userData = validation.value;
 
-  const checkUser = await userModel.find({
-    $and: [
-      { first_name: userData.first_name },
-      { second_name: userData.second_name },
+  console.log(
+    "Checking registering user",
+    userData.first_name,
+    userData.second_name,
+    userData.email
+  );
+
+  const checkUser = await userModel.findOne({
+    $or: [
+      {
+        $and: [
+          { first_name: userData.first_name },
+          { second_name: userData.second_name },
+        ],
+      },
       { email: userData.email },
     ],
   });
 
-  if (checkUser) return res.status(400).json({ message: "User already exits" });
+  if (checkUser)
+    return res.status(400).json({ message: "User already exits. Try again" });
+
+  console.log("User registering");
 
   const pswSalt = bcrypt.genSaltSync(10);
   const hash = bcrypt.hashSync(userData.password, pswSalt);
@@ -54,6 +67,6 @@ module.exports.LOG_IN = async (req, res) => {
     process.env.JWT_SECRET,
     { expiresIn: "20h" }
   );
-
+  console.log(`Successfull login by ${email}`);
   return res.json({ message: "Success", jwtToken });
 };
