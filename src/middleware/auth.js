@@ -9,6 +9,5 @@ const authUser = (req, res, next) => {
     req.body.userId = decoded.id;
     return next();
   });
-  return next();
 };
 module.exports = authUser;

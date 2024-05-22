@@ -7,6 +7,7 @@ const answerSchema = new mongoose.Schema(
     liked_by: { type: Array(String), required: true, default: [] },
     disliked_by: { type: Array(String), required: true, default: [] },
     question_id: { type: String, required: true },
+    user_id: { type: String, required: true },
   },
   { timestamps: true }
 );
