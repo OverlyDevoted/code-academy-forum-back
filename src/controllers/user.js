@@ -65,8 +65,34 @@ module.exports.LOG_IN = async (req, res) => {
   const jwtToken = jwt.sign(
     { name: user.username, id: user.id },
     process.env.JWT_SECRET,
-    { expiresIn: "20h" }
+    { expiresIn: "30d" }
   );
   console.log(`Successfull login by ${email}`);
   return res.json({ message: "Success", jwtToken });
+};
+
+module.exports.GET_USER_DATA = async (req, res) => {
+  try {
+    const { user_id: id } = req.body;
+    const user = await userModel.findOne({ id }, { password: 0 });
+    if (!user) return res.status(400).json({ message: "No user found" });
+    return res.json({ user });
+  } catch (e) {
+    console.log(e);
+    return res
+      .status(500)
+      .json({ message: "Something went bad while retrieving user data" });
+  }
+};
+
+module.exports.ATTACH_ID = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id)
+      return res.status(400).message({ message: "Did not provide an id" });
+    req.body.user_id = id;
+    return next();
+  } catch (e) {
+    return res.status(500).json("Something went bad");
+  }
 };
