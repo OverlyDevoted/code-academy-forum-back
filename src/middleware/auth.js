@@ -6,7 +6,7 @@ const authUser = (req, res, next) => {
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err)
       return res.status(401).json({ message: "User is not authenticted" });
-    req.body.userId = decoded.id;
+    req.body.user_id = decoded.id;
     return next();
   });
 };

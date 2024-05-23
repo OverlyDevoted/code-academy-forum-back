@@ -12,6 +12,6 @@ const answerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const answerModel = mongoose.model("Question", answerSchema, "questions");
+const answerModel = mongoose.model("Answer", answerSchema, "answers");
 
 module.exports = answerModel;

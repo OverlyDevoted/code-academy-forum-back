@@ -30,6 +30,6 @@ module.exports.CREATE_CATEGORY = async (req, res) => {
     return res.json({ message: "Successfully added category" });
   } catch (e) {
     console.log(e);
-    return res.status(500).json({ message: "Could not create category" });
+    return res.status(500).json({ message: "Could not add category" });
   }
 };

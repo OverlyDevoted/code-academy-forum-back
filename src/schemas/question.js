@@ -11,8 +11,8 @@ const questionSchema = Joi.object({
     .max(1000)
     .required()
     .label("Question text"),
-  user_id: Joi.string().alphanum().required().label("User ID"),
-  category_id: Joi.string().alphanum().required().label("Category ID"),
+  user_id: Joi.string().required().label("User ID"),
+  category_id: Joi.string().required().label("Category ID"),
 });
 
 module.exports = questionSchema;
