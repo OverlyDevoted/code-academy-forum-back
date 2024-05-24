@@ -4,6 +4,7 @@ const categorySchema = new mongoose.Schema(
   {
     id: { type: String, required: true },
     category_name: { type: String, required: true },
+    hue: { type: Number, required: true },
   },
   { timestamps: true }
 );

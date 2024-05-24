@@ -44,6 +44,7 @@ module.exports.GET_QUESTIONS = async (req, res) => {
       {
         $project: {
           answers: 0,
+          user_id: 0,
         },
       },
     ]);
@@ -70,7 +71,7 @@ module.exports.CREATE_QUESTION = async (req, res) => {
     const question = new questionModel({
       ...questionValue,
       id: uuid(),
-    }).exec();
+    });
     await question.save();
 
     return res.json({ message: "Successfully created question" });

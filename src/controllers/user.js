@@ -3,6 +3,7 @@ const { v4: uuid } = require("uuid");
 const jwt = require("jsonwebtoken");
 const userSchema = require("../schemas/user");
 const userModel = require("../models/user");
+const getHue = require("../helpers/getHue");
 
 module.exports.SIGN_UP = async (req, res) => {
   const validation = userSchema.validate(req.body);
@@ -42,7 +43,12 @@ module.exports.SIGN_UP = async (req, res) => {
 
   const pswSalt = bcrypt.genSaltSync(10);
   const hash = bcrypt.hashSync(userData.password, pswSalt);
-  const user = new userModel({ ...userData, id: uuid(), password: hash });
+  const user = new userModel({
+    ...userData,
+    id: uuid(),
+    password: hash,
+    hue: getHue(),
+  });
   await user.save();
   return res.json({
     message: "Successful register",

@@ -1,6 +1,7 @@
 const { v4: uuid } = require("uuid");
 const categoryModel = require("../models/category");
 const categorySchema = require("../schemas/category");
+const getHue = require("../helpers/getHue");
 
 module.exports.GET_CATEGORIES = async (req, res) => {
   try {
@@ -24,6 +25,7 @@ module.exports.CREATE_CATEGORY = async (req, res) => {
     const category = new categoryModel({
       category_name: categoryValue.category_name,
       id: uuid(),
+      hue: getHue(),
     });
     await category.save();
 
