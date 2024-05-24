@@ -4,7 +4,7 @@ const questionSchema = require("../schemas/question");
 
 module.exports.GET_QUESTIONS = async (req, res) => {
   try {
-    const questions = await questionModel.aggregate([
+    const rawQuestions = await questionModel.aggregate([
       {
         $lookup: {
           from: "users",
@@ -48,8 +48,13 @@ module.exports.GET_QUESTIONS = async (req, res) => {
         },
       },
     ]);
-    if (!questions.length)
+    if (!rawQuestions.length)
       return res.status(404).json({ message: "No questions found" });
+
+    const questions = rawQuestions.sort((questionA, questionB) => {
+      console.log(questionA);
+      return new Date(questionB.createdAt) - new Date(questionA.createdAt);
+    });
 
     return res.json({ questions });
   } catch (e) {
@@ -122,7 +127,7 @@ module.exports.GET_USER_QUESTIONS = async (req, res) => {
     if (!questions.length)
       return res.status(400).json("This user has no questions");
 
-    return res.json(questions);
+    return res.json(sortedQuestions);
   } catch (e) {
     return res
       .status(500)
