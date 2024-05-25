@@ -7,7 +7,7 @@ const questionSchema = Joi.object({
     .required()
     .label("Question title"),
   question_text: Joi.string()
-    .min(100)
+    .min(30)
     .max(1000)
     .required()
     .label("Question text"),

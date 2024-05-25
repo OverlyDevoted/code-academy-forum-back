@@ -99,6 +99,6 @@ module.exports.ATTACH_ID = async (req, res, next) => {
     req.body.user_id = id;
     return next();
   } catch (e) {
-    return res.status(500).json("Something went bad");
+    return res.status(500).json({ message: "Something went bad" });
   }
 };

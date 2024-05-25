@@ -1,5 +1,6 @@
 const { v4: uuid } = require("uuid");
 const questionModel = require("../models/question");
+const answerModel = require("../models/answer");
 const questionSchema = require("../schemas/question");
 
 module.exports.GET_QUESTIONS = async (req, res) => {
@@ -52,7 +53,6 @@ module.exports.GET_QUESTIONS = async (req, res) => {
       return res.status(404).json({ message: "No questions found" });
 
     const questions = rawQuestions.sort((questionA, questionB) => {
-      console.log(questionA);
       return new Date(questionB.createdAt) - new Date(questionA.createdAt);
     });
 
@@ -65,6 +65,7 @@ module.exports.GET_QUESTIONS = async (req, res) => {
 
 module.exports.CREATE_QUESTION = async (req, res) => {
   try {
+    console.log(req.body);
     const validation = questionSchema.validate({
       ...req.body,
     });
@@ -83,6 +84,45 @@ module.exports.CREATE_QUESTION = async (req, res) => {
   } catch (e) {
     console.log(e);
     return res.status(500).json({ message: "Could not create question" });
+  }
+};
+
+module.exports.GET_QUESTION = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.json(400).json({ message: "Bad id" });
+    const question = await questionModel.findOne({ id });
+    if (!question)
+      return res
+        .status(400)
+        .json({ message: "There's no questions with such ID" });
+
+    const answers = await answerModel
+      .aggregate([
+        { $match: { question_id: id } },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "id",
+            as: "user",
+          },
+        },
+        {
+          $project: {
+            "user.password": 0,
+            "user.email": 0,
+          },
+        },
+      ])
+      .exec();
+
+    return res.json({ question, answers });
+  } catch (e) {
+    console.log(e);
+    return res
+      .status(500)
+      .json({ message: "Something went bad while requestion user questions" });
   }
 };
 
@@ -125,7 +165,7 @@ module.exports.GET_USER_QUESTIONS = async (req, res) => {
       ])
       .exec();
     if (!questions.length)
-      return res.status(400).json("This user has no questions");
+      return res.status(400).json({ message: "This user has no questions" });
 
     return res.json(sortedQuestions);
   } catch (e) {
