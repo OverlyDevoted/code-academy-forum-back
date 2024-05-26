@@ -59,3 +59,27 @@ module.exports.GET_QUESTION_ANSWERS = async (req, res) => {
       .json({ message: "Could not retrieve answers to questions" });
   }
 };
+
+module.exports.DELETE_ANSWER = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ message: "Answer ID is missing" });
+
+    const { user_id } = req.body;
+    if (!user_id)
+      return res.status(403).json({ message: "Unauthorized to delete answer" });
+
+    const answer = await answerModel.findOne({ user_id });
+
+    if (answer.user_id !== user_id)
+      return res.status(403).json({ message: "Unauthorized to delete answer" });
+
+    await answerModel.deleteOne({ id });
+
+    return res.json({ message: "Successfully deleted answer" });
+  } catch (e) {
+    return res
+      .status(500)
+      .json({ message: "Something went wrong while deleting answer" });
+  }
+};
