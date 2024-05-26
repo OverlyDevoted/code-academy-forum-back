@@ -19,8 +19,10 @@ module.exports.CREATE_CATEGORY = async (req, res) => {
     const validation = categorySchema.validate({
       category_name: req.body.category_name,
     });
-    if (validation.error)
+    if (validation.error) {
+      console.log(validation.error);
       return res.status(400).json({ message: "Bad body for category" });
+    }
     const { value: categoryValue } = validation;
     const category = new categoryModel({
       category_name: categoryValue.category_name,
