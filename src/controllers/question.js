@@ -208,7 +208,7 @@ module.exports.DELETE_QUESTIONS = async (req, res) => {
     const { id } = req.params;
     if (!id) return res.json(400).json({ message: "Bad id" });
 
-    const question = questionModel.findOne({ id });
+    const question = await questionModel.findOne({ id });
 
     if (!question)
       return res.json(400).json({ message: "No question exists with such ID" });
@@ -220,8 +220,8 @@ module.exports.DELETE_QUESTIONS = async (req, res) => {
         .json(403)
         .json({ message: "Unauthorized to delete this question" });
 
-    await answerModel.deleteMany({ question_id: question.id });
-    await questionModel.deleteOne({ id: question.id });
+    const answers = await answerModel.deleteMany({ question_id: question.id });
+    const questions = await questionModel.deleteOne({ id: question.id });
 
     return res.json({ message: "Successfully deleted question" });
   } catch (e) {
