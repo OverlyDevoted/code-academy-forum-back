@@ -202,3 +202,29 @@ module.exports.GET_USER_QUESTIONS = async (req, res) => {
       .json({ message: "Something went bad while requestion user questions" });
   }
 };
+
+module.exports.DELETE_QUESTIONS = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.json(400).json({ message: "Bad id" });
+
+    const question = questionModel.findOne({ id });
+
+    if (!question)
+      return res.json(400).json({ message: "No question exists with such ID" });
+
+    const { user_id } = req.body;
+
+    if (user_id !== question.user_id)
+      return res
+        .json(403)
+        .json({ message: "Unauthorized to delete this question" });
+
+    await answerModel.deleteMany({ question_id: question.id });
+    await questionModel.deleteOne({ id: question.id });
+
+    return res.json({ message: "Successfully deleted question" });
+  } catch (e) {
+    return res.json({ message: "Something went wrong while deleting user" });
+  }
+};
