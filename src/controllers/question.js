@@ -91,8 +91,31 @@ module.exports.GET_QUESTION = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id) return res.json(400).json({ message: "Bad id" });
-    const question = await questionModel.findOne({ id });
-    if (!question)
+    const questions = await questionModel
+      .aggregate([
+        { $match: { id } },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "id",
+            as: "user",
+          },
+        },
+        {
+          $unwind: "$user",
+        },
+        {
+          $project: {
+            "user.password": 0,
+            "user.email": 0,
+            user_id: 0,
+          },
+        },
+      ])
+      .exec();
+
+    if (!questions.length)
       return res
         .status(400)
         .json({ message: "There's no questions with such ID" });
@@ -109,15 +132,20 @@ module.exports.GET_QUESTION = async (req, res) => {
           },
         },
         {
+          $unwind: "$user",
+        },
+        {
           $project: {
             "user.password": 0,
             "user.email": 0,
+            user_id: 0,
+            question_id: 0,
           },
         },
       ])
       .exec();
 
-    return res.json({ question, answers });
+    return res.json({ question: questions[0], answers });
   } catch (e) {
     console.log(e);
     return res
