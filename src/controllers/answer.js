@@ -123,7 +123,6 @@ module.exports.LIKE_ANSWER = async (req, res) => {
 
     const likeToAdd = is_like ? liked_by : disliked_by;
     let likeToRemove = is_like ? disliked_by : liked_by;
-    console.log(likeToAdd, likeToRemove);
 
     if (likeToAdd.some((user) => user === user_id))
       return res
